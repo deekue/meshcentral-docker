@@ -1,29 +1,31 @@
-# Filename: Dockerfile
+ARG NODE_VERSION=16-buster
+FROM node:$NODE_VERSION
 
-FROM ubuntu:latest
+# install any security updates
+RUN DEBIAN_FRONTEND=noninteractive apt -y update \
+    && DEBIAN_FRONTEND=noninteractive apt -y upgrade \
+    && apt -y clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Disable Prompt During Packages Installation
-ARG DEBIAN_FRONTEND=noninteractive
-
-#install dependencies
-RUN apt-get update && apt-get install -y nodejs npm nano
-
-#Add non-root user, add installation directories and assign proper permissions
-RUN mkdir -p /opt/meshcentral
-
-#meshcentral installation
 WORKDIR /opt/meshcentral
 
-RUN npm install meshcentral
+ARG MC_VERSION=latest
+RUN npm install meshcentral@$MC_VERSION
 
-COPY config.json.template /opt/meshcentral/config.json.template
+COPY config.json.template config.json.template
 COPY startup.sh startup.sh
-#environment variables
 
-EXPOSE 80 443
+EXPOSE 443
+EXPOSE 80  # MC *really* doesn't want you to use this
 
-#volumes
+ENV MC_HOSTNAME
+ENV REVERSE_PROXY
+ENV REVERSE_PROXY_TLS_PORT
+ENV IFRAME
+ENV ALLOW_NEW_ACCOUNTS
+ENV WEBRTC
+
 VOLUME /opt/meshcentral/meshcentral-data
 VOLUME /opt/meshcentral/meshcentral-files
 
-CMD ["bash","/opt/meshcentral/startup.sh"]
+ENTRYPOINT ["/opt/meshcentral/startup.sh"]
