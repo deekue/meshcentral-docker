@@ -1,44 +1,45 @@
-version: '3.3'
+version: "3.3"
 services:
-    meshcentral:
-        build:
-          args:
-            BITNAMI_NODE_VERSION: 16-prod-debian-10
-            MC_VERSION: latest
-            MC_USER: meshcentral
-            MC_UID: 1000
-            MC_GID: 1000
-          context: .
-        restart: always
-        container_name: meshcentral
-        image: typhonragewind/meshcentral
-        ports:
-            - 8086:443
-            - 4443:4443
-            # MeshCentral will moan and try everything not to use port 80, but
-            # you can also use it if you so desire, just change the config.json
-            # according to your needs
-            # - 8080:80
-        environment:
-            # env vars are only used to create config.json if not present
-            - MC_HOSTNAME=host.example.com # your hostname
-            - REVERSE_PROXY=false       # set to your reverse proxy IP/hostname if you want to put meshcentral behind a reverse proxy
-            - REVERSE_PROXY_TLS_PORT=443
-            - IFRAME=false              # set to true if you wish to enable iframe support
-            - ALLOW_NEW_ACCOUNTS=true   # set to false if you want disable self-service creation of new accounts besides the first (admin)
-            - WEBRTC=false              # set to true to enable WebRTC - per documentation it is not officially released with meshcentral, but is solid enough to work with. Use with caution
-        volumes:
-            # source dirs must be writable by MC_UID and/or MC_GID
-            # config.json and other important files live here. A must for data persistence
-            - type: bind
-              source: ./meshcentral/data
-              target: /opt/meshcentral/meshcentral-data
-            # where file uploads for users live
-            - type: bind
-              source: ./meshcentral/user_files
-              target: /opt/meshcentral/meshcentral-files
-        healthcheck:
-            test: "${DOCKER_HEALTHCHECK_TEST:-curl -f localhost:80 || exit 1}"
-            interval: "60s"
-            timeout: "3s"
-            retries: 3
+  meshcentral:
+    build:
+      args:
+        BITNAMI_NODE_VERSION: 16-prod-debian-10
+        MC_VERSION: latest
+        MC_USER: meshcentral
+        MC_UID: 1000
+        MC_GID: 1000
+      context: .
+    restart: always
+    container_name: meshcentral
+    image: typhonragewind/meshcentral
+    ports:
+      - 8086:443
+      - 4443:4443
+      # MeshCentral will moan and try everything not to use port 80, but
+      # you can also use it if you so desire, just change the config.json
+      # according to your needs
+      # - 8080:80
+    environment:
+      # env vars are only used to create config.json if not present
+      - MC_HOSTNAME=host.example.com # your hostname
+      - REVERSE_PROXY=false # set to your reverse proxy IP/hostname if you want to put meshcentral behind a reverse proxy
+      - REVERSE_PROXY_TLS_PORT=443
+      - IFRAME=false # set to true if you wish to enable iframe support
+      - ALLOW_NEW_ACCOUNTS=true # set to false if you want disable self-service creation of new accounts besides the first (admin)
+      - WEBRTC=false # set to true to enable WebRTC - per documentation it is not officially released with meshcentral, but is solid enough to work with. Use with caution
+    volumes:
+      # source dirs must be writable by MC_UID and/or MC_GID
+      # config.json and other important files live here. A must for data persistence
+      - type: bind
+        source: ./meshcentral/data
+        target: /opt/meshcentral/meshcentral-data
+      # where file uploads for users live
+      - type: bind
+        source: ./meshcentral/user_files
+        target: /opt/meshcentral/meshcentral-files
+    healthcheck:
+      test: "${DOCKER_HEALTHCHECK_TEST:-curl -f localhost:80 || exit 1}"
+      interval: "60s"
+      timeout: "3s"
+      retries: 3
+
