@@ -31,6 +31,7 @@ EXPOSE 443
 EXPOSE 4443
 EXPOSE 80
 
+VOLUME /opt/meshcentral/meshcentral-backup
 VOLUME /opt/meshcentral/meshcentral-data
 VOLUME /opt/meshcentral/meshcentral-files
 

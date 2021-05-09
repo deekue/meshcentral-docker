@@ -37,6 +37,10 @@ services:
       - type: bind
         source: ./meshcentral/user_files
         target: /opt/meshcentral/meshcentral-files
+      # automated backups
+      - type: bind
+        source: ./meshcentral/backups
+        target: /opt/meshcentral/meshcentral-backups
     healthcheck:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl -f localhost:80 || exit 1}"
       interval: "60s"
